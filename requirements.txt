@@ -1,0 +1,3 @@
+openai>=1.55.0
+snaptrade-python-sdk>=11.0.0
+pyyaml>=6.0

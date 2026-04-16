@@ -236,6 +236,64 @@ def massive_series(symbol: str) -> dict:
         return {"ok": False, "symbol": symbol, "url": url, "error": str(exc)}
 
 
+def polygon_series(symbol: str) -> dict:
+    if not POLYGON_API_KEY:
+        return {"ok": False, "symbol": symbol, "error": "missing POLYGON_API_KEY"}
+    polygon_symbol = POLYGON_SYMBOL_MAP.get(symbol)
+    if not polygon_symbol:
+        return {"ok": False, "symbol": symbol, "error": "Polygon mapping unavailable"}
+
+    end_date = date.today()
+    start_date = end_date - timedelta(days=400)
+    encoded = urllib.parse.quote(polygon_symbol, safe="")
+    url = (
+        f"{POLYGON_BASE_URL}/v2/aggs/ticker/{encoded}/range/1/day/"
+        f"{start_date.isoformat()}/{end_date.isoformat()}"
+    )
+    try:
+        payload = http_get_json(
+            url,
+            {
+                "adjusted": "true",
+                "sort": "asc",
+                "limit": "5000",
+                "apiKey": POLYGON_API_KEY,
+            },
+        )
+        results = payload.get("results") or []
+        points: list[tuple[int, float]] = []
+        for row in results:
+            raw_ts = row.get("t")
+            raw_close = row.get("c")
+            if raw_ts is None or raw_close is None:
+                continue
+            ts = int(raw_ts)
+            if ts > 10_000_000_000:
+                ts //= 1000
+            points.append((ts, float(raw_close)))
+
+        if len(points) < 2:
+            return {"ok": False, "symbol": symbol, "url": url, "error": "insufficient Polygon data"}
+
+        latest_ts, latest = points[-1]
+        chg_1d, chg_5d, chg_20d = compute_changes(points)
+        return {
+            "ok": True,
+            "symbol": symbol,
+            "url": url,
+            "source": "polygon",
+            "polygon_symbol": polygon_symbol,
+            "asof_utc": datetime.fromtimestamp(latest_ts, tz=timezone.utc).isoformat(),
+            "latest": latest,
+            "chg_1d_pct": chg_1d,
+            "chg_5d_pct": chg_5d,
+            "chg_20d_pct": chg_20d,
+            "series_close": [value for _, value in points],
+        }
+    except Exception as exc:  # noqa: BLE001
+        return {"ok": False, "symbol": symbol, "url": url, "error": str(exc)}
+
+
 def yahoo_series(symbol: str, range_: str = "1y", interval: str = "1d") -> dict:
     encoded = urllib.parse.quote(symbol, safe="")
     url = (
@@ -434,7 +492,11 @@ def fred_proxy_series(symbol: str) -> dict:
             return {"ok": False, "symbol": symbol, "error": "insufficient FRED proxy data"}
 
         latest_ts, latest = points[-1]
-        chg_1d, chg_5d, chg_20d = compute_changes(points)
+        is_monthly = series_id in MONTHLY_FRED_SERIES
+        if is_monthly:
+            chg_1d, chg_5d, chg_20d = None, None, None
+        else:
+            chg_1d, chg_5d, chg_20d = compute_changes(points)
         return {
             "ok": True,
             "symbol": symbol,
@@ -447,6 +509,7 @@ def fred_proxy_series(symbol: str) -> dict:
             "chg_20d_pct": chg_20d,
             "series_close": [value for _, value in points],
             "proxy_series": [series_id],
+            "proxy_is_monthly": is_monthly,
         }
     except Exception as exc:  # noqa: BLE001
         return {"ok": False, "symbol": symbol, "error": str(exc)}
@@ -550,6 +613,12 @@ def fetch_symbol_with_fallback(symbol: str, cache: dict[str, dict]) -> dict:
         return primary
     attempts.append(f"massive:{primary.get('error', 'unknown')}")
 
+    polygon = polygon_series(symbol)
+    if polygon.get("ok"):
+        polygon["fallback_chain"] = attempts
+        return polygon
+    attempts.append(f"polygon:{polygon.get('error', 'unknown')}")
+
     yahoo = yahoo_series(symbol)
     if yahoo.get("ok"):
         yahoo["fallback_chain"] = attempts
@@ -577,7 +646,7 @@ def fetch_symbol_with_fallback(symbol: str, cache: dict[str, dict]) -> dict:
     return {
         "ok": False,
         "symbol": symbol,
-        "url": primary.get("url") or yahoo.get("url"),
+        "url": primary.get("url") or polygon.get("url") or yahoo.get("url"),
         "error": "all sources failed",
         "fallback_chain": attempts,
     }
@@ -642,12 +711,20 @@ def calc_breadth_proxy(flat: dict[str, dict]) -> dict:
 
 
 def build_snapshot(pause_s: float = 0.25) -> dict:
+    fallbacks = []
+    if POLYGON_API_KEY:
+        fallbacks.append("polygon_aggs")
+    fallbacks.extend(["yahoo_chart_api_public", "stooq_csv_public", "fred_proxy_public", "local_cache"])
+
     out: dict = {
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "source": {
-            "stock_primary": "massive_aggregates" if MASSIVE_API_KEY else "yahoo_chart_api_public",
-            "fallbacks": ["yahoo_chart_api_public", "stooq_csv_public", "fred_proxy_public", "local_cache"],
+            "stock_primary": "massive_aggregates" if MASSIVE_API_KEY else (
+                "polygon_aggs" if POLYGON_API_KEY else "yahoo_chart_api_public"
+            ),
+            "fallbacks": fallbacks,
             "macro_primary": "fredgraph_csv_public",
+            "macro_fallback": "yahoo_cboe_yield_indices",
             "cache_path": str(CACHE_PATH),
         },
         "panels": {},
