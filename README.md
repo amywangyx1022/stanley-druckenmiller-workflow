@@ -1,148 +1,98 @@
 # Stanley Druckenmiller Workflow
 
-Thesis-driven market analysis skill for OpenClaw.
+This repository is now a plain GitHub automation project for a Druckenmiller-style morning market review. It no longer depends on ClawHub, OpenClaw, or skill-packaging metadata.
 
-This skill is designed for Druckenmiller-inspired macro/equity thinking with a live PM memo voice:
-- Liquidity and rates first
-- Consensus vs variant explicitly separated
-- D1/D2 (first derivative / second derivative) regime logic
-- Evidence anchors and safety disclaimers
+The repo does three things:
 
-## What This Skill Produces
+1. Builds a market snapshot from public macro feeds plus optional Massive market data.
+2. Generates an English-only morning review in Markdown.
+3. Runs that review automatically on weekday mornings through GitHub Actions and emails it through Gmail SMTP.
 
-Depending on trigger, it can generate:
-- AM morning brief (thesis + validation)
-- EOD wrap
-- Weekly review
-- Monthly regime review
-- Pre-trade thesis collision check
-- Asset divergence monitor
-
-All outputs are narrative and decision-oriented (not raw JSON dumps).
-
-## Folder Structure
+## Repo Layout
 
 ```text
-stanley-druckenmiller-workflow/
-  SKILL.md
-  README.md
-  scripts/
-    market_panels.py
+.
+├── .github/workflows/morning-review.yml
+├── docs/data-sources.md
+├── REVIEW_SPEC.md
+└── scripts/
+├── generate_morning_review.py
+    ├── market_panels.py
+    └── send_review_email.py
 ```
 
-## Core Design Principles
+## Morning Review Routine
 
-1. Public data only (no private-info claims)
-2. No explicit trade orders (no entry, stop, target, size)
-3. Probabilistic language over certainty
-4. Facts and interpretation separated
-5. Mandatory fields:
-   - what_would_change_my_mind
-   - data_timestamp (ISO8601)
-6. If data is missing, downgrade safely (DATA LIMITED)
+The scheduled workflow lives at `.github/workflows/morning-review.yml`.
 
-## Triggers and Modes
+- Schedule: weekday mornings around 7:15 AM Chicago time
+- Trigger: `workflow_dispatch` and `schedule`
+- Output:
+  - `reports/latest/morning-review.md`
+  - `reports/latest/market-panels.json`
+  - `reports/latest/news.json`
+  - dated archive copies under `reports/archive/`
+  - email delivery through Gmail SMTP
 
-- Mode A (AM brief):
-  - `晨报`
-  - `macro update`
-  - `stan分析下当前市场`
-  - `今天怎么看`
+The workflow uses GitHub Actions' timezone-aware schedule support with `America/Chicago`, so the daily run stays aligned with the local morning across daylight saving changes.
 
-- Mode B (EOD wrap):
-  - `EOD`
-  - `收盘复盘`
-  - `今天盘面总结`
+## Data Sources
 
-- Mode C (Weekly):
-  - `周报`
-  - `weekly review`
-  - `下周怎么看`
+The source map is documented in [docs/data-sources.md](/C:/Users/awang/Downloads/Github_repo/stanley-druckenmiller-workflow/docs/data-sources.md).
 
-- Mode D (Pre-trade consult):
-  - `交易前看一眼`
-  - `should I buy/sell`
-  - `帮我做交易前 sanity check`
+In short:
 
-- Mode E (Monthly):
-  - `月报`
-  - `monthly review`
-  - `regime review`
+- Massive is the preferred source for stock and ETF daily bars when `MASSIVE_API_KEY` is configured.
+- FRED remains the source of record for liquidity and macro time series.
+- Yahoo, Stooq, and FRED proxy series remain as public fallbacks where Massive does not fit or no key is present.
+- News uses Massive first and falls back to Google News RSS search lanes.
 
-- Mode F (13F rationale):
-  - `13F`
-  - `why did he buy XLF`
-  - `Q3 to Q4 holdings changes`
+## Required GitHub Secret
 
-- Mode G (Asset divergence):
-  - `盯住 [TICKER]`
-  - `check divergence for [TICKER]`
-  - `资产背离警报`
+Set these repository secrets:
 
-## Evidence and Safety Contract
+- `MASSIVE_API_KEY`
+- `GMAIL_SMTP_USERNAME`
+- `GMAIL_APP_PASSWORD`
+- `MORNING_REVIEW_EMAIL_TO`
 
-- Include `Evidence anchors` section (top 6-12; Mode G: 3-5)
-- Each anchor should include:
-  - panel/metric
-  - direction/change
-  - lookback window
-  - timestamp
-  - source
-- Missing evidence must be tagged:
-  - `[EVIDENCE INSUFFICIENT: missing X]`
+Optional:
 
-Safety footer (always append):
-- Chinese: `免责声明：以上内容是研究框架信息，不构成投资建议或交易指令。`
-- English: `Disclaimer: The above content is research framework information and does not constitute investment advice or trading instructions.`
+- `MORNING_REVIEW_EMAIL_FROM`
+- `MORNING_REVIEW_EMAIL_CC`
+- `MORNING_REVIEW_SUBJECT_PREFIX`
 
-## Local Validation Checklist (Before Publish)
+Without `MASSIVE_API_KEY`, the workflow still runs using the public fallback sources, but the review may mark itself `DATA LIMITED` if live news coverage is too thin.
 
-1. `SKILL.md` frontmatter valid (`name`, `description`, metadata)
-2. Trigger words route to expected mode
-3. Output contains mandatory fields
-4. DATA LIMITED behavior works when data is missing
-5. No explicit trading instructions in output
-6. Chinese and English depth parity is preserved
+## Manual Usage
 
-## Publish Checklist (ClawHub)
-
-Do this only when you are ready to publish.
-
-1. Login:
+Build a snapshot:
 
 ```bash
-clawhub login
-clawhub whoami
+python scripts/market_panels.py --pretty --output reports/latest/market-panels.json
 ```
 
-2. Optional dry run checks:
+Generate the full morning review:
 
 ```bash
-clawhub list
+python scripts/generate_morning_review.py --force --output-dir reports/latest --archive-dir reports/archive
 ```
 
-3. Publish command template:
+Email the latest review:
 
 ```bash
-clawhub publish ./skills/stanley-druckenmiller-workflow \
-  --slug stanley-druckenmiller-workflow \
-  --name "Stanley Druckenmiller Workflow" \
-  --version 1.0.0 \
-  --changelog "Initial public release: thesis-driven macro workflow with A-G modes, evidence protocol, and safe downgrade behavior."
+python scripts/send_review_email.py \
+  --markdown reports/latest/morning-review.md \
+  --snapshot reports/latest/market-panels.json \
+  --news reports/latest/news.json \
+  --smtp-username "$GMAIL_SMTP_USERNAME" \
+  --app-password "$GMAIL_APP_PASSWORD" \
+  --to "you@example.com"
 ```
-
-4. Verify result:
-
-- Confirm package page on ClawHub
-- Install from a clean env and run one trigger from Mode A and one from Mode G
-
-## Versioning Suggestion
-
-- Start: `1.0.0`
-- Behavior changes in output contract: bump minor (`1.1.0`)
-- Trigger or schema breaking changes: bump major (`2.0.0`)
 
 ## Notes
 
-- This skill is Druckenmiller-inspired and should never claim direct affiliation.
-- Keep style high-conviction but evidence-auditable.
+- The output is English-only.
+- The project is inspired by Druckenmiller-style cross-asset thinking and does not claim private access or direct affiliation.
+- The generated review is research workflow output, not investment advice.
+- Gmail app passwords require Google account 2-Step Verification. Google also notes that app passwords are not recommended and may be unavailable for some managed Workspace accounts.

@@ -1,0 +1,63 @@
+name: Morning Review
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "15 7 * * 1-5"
+      timezone: "America/Chicago"
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Generate morning review
+        env:
+          MASSIVE_API_KEY: ${{ secrets.MASSIVE_API_KEY }}
+        run: |
+          python scripts/generate_morning_review.py \
+            --output-dir reports/latest \
+            --archive-dir reports/archive \
+            --timezone America/Chicago \
+            --force
+
+      - name: Upload latest review artifacts
+        if: hashFiles('reports/latest/*') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: morning-review
+          path: reports/latest
+
+      - name: Send morning review email
+        if: ${{ hashFiles('reports/latest/morning-review.md') != '' && secrets.GMAIL_SMTP_USERNAME != '' && secrets.GMAIL_APP_PASSWORD != '' && secrets.MORNING_REVIEW_EMAIL_TO != '' }}
+        env:
+          GMAIL_SMTP_USERNAME: ${{ secrets.GMAIL_SMTP_USERNAME }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          MORNING_REVIEW_EMAIL_FROM: ${{ secrets.MORNING_REVIEW_EMAIL_FROM }}
+          MORNING_REVIEW_EMAIL_TO: ${{ secrets.MORNING_REVIEW_EMAIL_TO }}
+          MORNING_REVIEW_EMAIL_CC: ${{ secrets.MORNING_REVIEW_EMAIL_CC }}
+          MORNING_REVIEW_SUBJECT_PREFIX: ${{ secrets.MORNING_REVIEW_SUBJECT_PREFIX }}
+        run: |
+          python scripts/send_review_email.py \
+            --markdown reports/latest/morning-review.md \
+            --snapshot reports/latest/market-panels.json \
+            --news reports/latest/news.json
+
+      - name: Commit generated review
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/latest reports/archive
+          git diff --cached --quiet || git commit -m "Add morning review for $(date -u +%F)"
+          git push

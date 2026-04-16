@@ -1,0 +1,496 @@
+{
+  "generated_at_utc": "2026-04-16T18:10:52.540726+00:00",
+  "source": {
+    "stock_primary": "yahoo_chart_api_public",
+    "fallbacks": [
+      "yahoo_chart_api_public",
+      "stooq_csv_public",
+      "fred_proxy_public",
+      "local_cache"
+    ],
+    "macro_primary": "fredgraph_csv_public",
+    "cache_path": "C:\\Users\\awang\\Downloads\\Github_repo\\stanley-druckenmiller-workflow\\.cache\\market-panels-cache.json"
+  },
+  "panels": {
+    "rates": {
+      "^IRX": {
+        "ok": true,
+        "symbol": "^IRX",
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EIRX?range=1y&interval=1d&includePrePost=false",
+        "source": "yahoo",
+        "asof_utc": "2026-04-16T12:20:00+00:00",
+        "latest": 3.609999895095825,
+        "chg_1d_pct": -0.05537357326744214,
+        "chg_5d_pct": 0.6131503791938462,
+        "chg_20d_pct": 0.0,
+        "fallback_chain": [
+          "massive:missing MASSIVE_API_KEY"
+        ]
+      },
+      "^FVX": {
+        "ok": true,
+        "symbol": "^FVX",
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EFVX?range=1y&interval=1d&includePrePost=false",
+        "source": "yahoo",
+        "asof_utc": "2026-04-16T12:20:00+00:00",
+        "latest": 3.9169998168945312,
+        "chg_1d_pct": 0.5390120364667834,
+        "chg_5d_pct": 0.05108186618110069,
+        "chg_20d_pct": 1.4241281331331326,
+        "fallback_chain": [
+          "massive:missing MASSIVE_API_KEY"
+        ]
+      },
+      "^TNX": {
+        "ok": true,
+        "symbol": "^TNX",
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5ETNX?range=1y&interval=1d&includePrePost=false",
+        "source": "yahoo",
+        "asof_utc": "2026-04-16T12:20:00+00:00",
+        "latest": 4.313000202178955,
+        "chg_1d_pct": 0.7239639621581503,
+        "chg_5d_pct": 0.4658742114082368,
+        "chg_20d_pct": 1.2679121831395122,
+        "fallback_chain": [
+          "massive:missing MASSIVE_API_KEY"
+        ]
+      },
+      "^TYX": {
+        "ok": true,
+        "symbol": "^TYX",
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5ETYX?range=1y&interval=1d&includePrePost=false",
+        "source": "yahoo",
+        "asof_utc": "2026-04-16T12:20:00+00:00",
+        "latest": 4.934999942779541,
+        "chg_1d_pct": 0.8996146110476867,
+        "chg_5d_pct": 0.7759875042759061,
+        "chg_20d_pct": 1.1063286284293614,
+        "fallback_chain": [
+          "massive:missing MASSIVE_API_KEY"
+        ]
+      }
+    },
+    "fx": {
+      "DX-Y.NYB": {
+        "ok": true,
+        "symbol": "DX-Y.NYB",
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?range=1y&interval=1d&includePrePost=false",
+        "source": "yahoo",
+        "asof_utc": "2026-04-16T04:00:00+00:00",
+        "latest": 98.25599670410156,
+        "chg_1d_pct": 0.1998767595223498,
+        "chg_5d_pct": -0.5707376972924605,
+        "chg_20d_pct": -1.8323505853649165,
+        "fallback_chain": [
+          "massive:missing MASSIVE_API_KEY"
+        ]
+      },
+      "AUDJPY=X": {
+        "ok": true,
+        "symbol": "AUDJPY=X",
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/AUDJPY%3DX?range=1y&interval=1d&includePrePost=false",
+        "source": "yahoo",
+        "asof_utc": "2026-04-16T18:10:59+00:00",
+        "latest": 113.91200256347656,
+        "chg_1d_pct": 0.6280917899743225,
+        "chg_5d_pct": 2.0077052308528973,
+        "chg_20d_pct": 1.425510944459846,
+        "fallback_chain": [
+          "massive:missing MASSIVE_API_KEY"
+        ]
+      }
+    },
+    "equities": {
+      "^GSPC": {
+        "ok": true,
+        "symbol": "^GSPC",
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?range=1y&interval=1d&includePrePost=false",
+        "source": "yahoo",
+        "asof_utc": "2026-04-16T13:30:00+00:00",
+        "latest": 7023.47021484375,
+        "chg_1d_pct": 0.00740457381567492,
+        "chg_5d_pct": 2.9131129469015455,
+        "chg_20d_pct": 6.019442507200724,
+        "fallback_chain": [
+          "massive:missing MASSIVE_API_KEY"
+        ]
+      },
+      "^IXIC": {
+        "ok": true,
+        "symbol": "^IXIC",
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EIXIC?range=1y&interval=1d&includePrePost=false",
+        "source": "yahoo",
+        "asof_utc": "2026-04-16T13:30:00+00:00",
+        "latest": 24016.9765625,
+        "chg_1d_pct": 0.003984970318477201,
+        "chg_5d_pct": 5.2341366284301545,
+        "chg_20d_pct": 8.416943373232979,
+        "fallback_chain": [
+          "massive:missing MASSIVE_API_KEY"
+        ]
+      },
+      "^RUT": {
+        "ok": true,
+        "symbol": "^RUT",
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5ERUT?range=1y&interval=1d&includePrePost=false",
+        "source": "yahoo",
+        "asof_utc": "2026-04-16T13:30:00+00:00",
+        "latest": 2710.113525390625,
+        "chg_1d_pct": -0.130686483701391,
+        "chg_5d_pct": 2.7994987371190683,
+        "chg_20d_pct": 9.338735873073347,
+        "fallback_chain": [
+          "massive:missing MASSIVE_API_KEY"
+        ]
+      },
+      "^VIX": {
+        "ok": true,
+        "symbol": "^VIX",
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?range=1y&interval=1d&includePrePost=false",
+        "source": "yahoo",
+        "asof_utc": "2026-04-16T07:00:00+00:00",
+        "latest": 18.399999618530273,
+        "chg_1d_pct": 1.2658202601573136,
+        "chg_5d_pct": -5.592612444270727,
+        "chg_20d_pct": -26.66401153197116,
+        "fallback_chain": [
+          "massive:missing MASSIVE_API_KEY"
+        ]
+      },
+      "SPY": {
+        "ok": true,
+        "symbol": "SPY",
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?range=1y&interval=1d&includePrePost=false",
+        "source": "yahoo",
+        "asof_utc": "2026-04-16T13:30:00+00:00",
+        "latest": 700.0900268554688,
+        "chg_1d_pct": 0.021433896268138915,
+        "chg_5d_pct": 2.968047904578647,
+        "chg_20d_pct": 5.844917014314744,
+        "fallback_chain": [
+          "massive:missing MASSIVE_API_KEY"
+        ]
+      },
+      "IWM": {
+        "ok": true,
+        "symbol": "IWM",
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/IWM?range=1y&interval=1d&includePrePost=false",
+        "source": "yahoo",
+        "asof_utc": "2026-04-16T13:30:00+00:00",
+        "latest": 269.0700988769531,
+        "chg_1d_pct": -0.11875561605424582,
+        "chg_5d_pct": 2.7141959283100174,
+        "chg_20d_pct": 9.369195270383294,
+        "fallback_chain": [
+          "massive:missing MASSIVE_API_KEY"
+        ]
+      }
+    },
+    "credit": {
+      "HYG": {
+        "ok": true,
+        "symbol": "HYG",
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/HYG?range=1y&interval=1d&includePrePost=false",
+        "source": "yahoo",
+        "asof_utc": "2026-04-16T13:30:00+00:00",
+        "latest": 80.31500244140625,
+        "chg_1d_pct": -0.18020960069136766,
+        "chg_5d_pct": 0.0436019714021246,
+        "chg_20d_pct": 1.1523940780141129,
+        "fallback_chain": [
+          "massive:missing MASSIVE_API_KEY"
+        ]
+      },
+      "LQD": {
+        "ok": false,
+        "symbol": "LQD",
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/LQD?range=1y&interval=1d&includePrePost=false",
+        "error": "all sources failed",
+        "fallback_chain": [
+          "massive:missing MASSIVE_API_KEY",
+          "yahoo:IncompleteRead(0 bytes read)",
+          "stooq:insufficient Stooq data",
+          "fred-proxy:FRED proxy mapping unavailable",
+          "cache:cache miss"
+        ]
+      }
+    },
+    "internals": {
+      "XHB": {
+        "ok": true,
+        "symbol": "XHB",
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/XHB?range=1y&interval=1d&includePrePost=false",
+        "source": "yahoo",
+        "asof_utc": "2026-04-16T13:30:00+00:00",
+        "latest": 102.83999633789062,
+        "chg_1d_pct": -0.038881139769873785,
+        "chg_5d_pct": -1.2862391662121961,
+        "chg_20d_pct": 3.263379977415949,
+        "fallback_chain": [
+          "massive:missing MASSIVE_API_KEY"
+        ]
+      },
+      "ITB": {
+        "ok": true,
+        "symbol": "ITB",
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/ITB?range=1y&interval=1d&includePrePost=false",
+        "source": "yahoo",
+        "asof_utc": "2026-04-16T13:30:00+00:00",
+        "latest": 94.05999755859375,
+        "chg_1d_pct": 0.12773591022881362,
+        "chg_5d_pct": -0.6233533626767447,
+        "chg_20d_pct": 2.9553381460203973,
+        "fallback_chain": [
+          "massive:missing MASSIVE_API_KEY"
+        ]
+      },
+      "IYT": {
+        "ok": true,
+        "symbol": "IYT",
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/IYT?range=1y&interval=1d&includePrePost=false",
+        "source": "yahoo",
+        "asof_utc": "2026-04-16T13:30:00+00:00",
+        "latest": 80.23999786376953,
+        "chg_1d_pct": 1.569617549075356,
+        "chg_5d_pct": 2.9774124093201593,
+        "chg_20d_pct": 8.344586158386482,
+        "fallback_chain": [
+          "massive:missing MASSIVE_API_KEY"
+        ]
+      },
+      "XRT": {
+        "ok": true,
+        "symbol": "XRT",
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/XRT?range=1y&interval=1d&includePrePost=false",
+        "source": "yahoo",
+        "asof_utc": "2026-04-16T13:30:00+00:00",
+        "latest": 84.26000213623047,
+        "chg_1d_pct": 0.45303397145380264,
+        "chg_5d_pct": 0.4769872680271965,
+        "chg_20d_pct": 6.671736188105582,
+        "fallback_chain": [
+          "massive:missing MASSIVE_API_KEY"
+        ]
+      },
+      "SMH": {
+        "ok": true,
+        "symbol": "SMH",
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/SMH?range=1y&interval=1d&includePrePost=false",
+        "source": "yahoo",
+        "asof_utc": "2026-04-16T13:30:00+00:00",
+        "latest": 451.8599853515625,
+        "chg_1d_pct": -0.2516588627897351,
+        "chg_5d_pct": 5.008014667387402,
+        "chg_20d_pct": 14.781408270637813,
+        "fallback_chain": [
+          "massive:missing MASSIVE_API_KEY"
+        ]
+      },
+      "KRE": {
+        "ok": true,
+        "symbol": "KRE",
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/KRE?range=1y&interval=1d&includePrePost=false",
+        "source": "yahoo",
+        "asof_utc": "2026-04-16T13:30:00+00:00",
+        "latest": 68.83999633789062,
+        "chg_1d_pct": -0.4770881014752516,
+        "chg_5d_pct": -1.4459587090823875,
+        "chg_20d_pct": 9.93292480373833,
+        "fallback_chain": [
+          "massive:missing MASSIVE_API_KEY"
+        ]
+      },
+      "XLY": {
+        "ok": true,
+        "symbol": "XLY",
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/XLY?range=1y&interval=1d&includePrePost=false",
+        "source": "yahoo",
+        "asof_utc": "2026-04-16T13:30:00+00:00",
+        "latest": 117.53500366210938,
+        "chg_1d_pct": -0.5457747854127888,
+        "chg_5d_pct": 4.253154061732319,
+        "chg_20d_pct": 6.299180597367034,
+        "fallback_chain": [
+          "massive:missing MASSIVE_API_KEY"
+        ]
+      },
+      "XLP": {
+        "ok": true,
+        "symbol": "XLP",
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/XLP?range=1y&interval=1d&includePrePost=false",
+        "source": "yahoo",
+        "asof_utc": "2026-04-16T13:30:00+00:00",
+        "latest": 81.20999908447266,
+        "chg_1d_pct": 0.18505000048942577,
+        "chg_5d_pct": -2.6842395993840897,
+        "chg_20d_pct": -1.730397284290039,
+        "fallback_chain": [
+          "massive:missing MASSIVE_API_KEY"
+        ]
+      }
+    },
+    "commodities": {
+      "CL=F": {
+        "ok": true,
+        "symbol": "CL=F",
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/CL%3DF?range=1y&interval=1d&includePrePost=false",
+        "source": "yahoo",
+        "asof_utc": "2026-04-16T04:00:00+00:00",
+        "latest": 91.27999877929688,
+        "chg_1d_pct": -0.010956442250147361,
+        "chg_5d_pct": -6.733425750838965,
+        "chg_20d_pct": -5.232559106619442,
+        "fallback_chain": [
+          "massive:missing MASSIVE_API_KEY"
+        ]
+      },
+      "GC=F": {
+        "ok": true,
+        "symbol": "GC=F",
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/GC%3DF?range=1y&interval=1d&includePrePost=false",
+        "source": "yahoo",
+        "asof_utc": "2026-04-16T04:00:00+00:00",
+        "latest": 4814.2998046875,
+        "chg_1d_pct": 0.29791259765625,
+        "chg_5d_pct": 0.4611578914548849,
+        "chg_20d_pct": -1.5460459143553131,
+        "fallback_chain": [
+          "massive:missing MASSIVE_API_KEY"
+        ]
+      },
+      "HG=F": {
+        "ok": true,
+        "symbol": "HG=F",
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/HG%3DF?range=1y&interval=1d&includePrePost=false",
+        "source": "yahoo",
+        "asof_utc": "2026-04-16T04:00:00+00:00",
+        "latest": 6.076499938964844,
+        "chg_1d_pct": 0.07410922664976272,
+        "chg_5d_pct": 5.715027587368295,
+        "chg_20d_pct": 9.407634992395847,
+        "fallback_chain": [
+          "massive:missing MASSIVE_API_KEY"
+        ]
+      }
+    },
+    "breadth_proxy": {
+      "ok": true,
+      "method": "proxy-universe",
+      "universe": [
+        "SPY",
+        "IWM",
+        "XHB",
+        "ITB",
+        "IYT",
+        "XRT",
+        "SMH",
+        "KRE",
+        "XLY",
+        "XLP",
+        "HYG"
+      ],
+      "advancers_1d": 5,
+      "decliners_1d": 6,
+      "ad_line_1d": -1,
+      "pct_above_200d": 72.72727272727273,
+      "new_highs_20d": 3,
+      "new_lows_20d": 0,
+      "sample_size": 11
+    }
+  },
+  "ratios": {
+    "IWM_SPY": {
+      "ok": true,
+      "a": "IWM",
+      "b": "SPY",
+      "value": 0.3843364261100976
+    },
+    "XLY_XLP": {
+      "ok": true,
+      "a": "XLY",
+      "b": "XLP",
+      "value": 1.4472971923057447
+    },
+    "XHB_SPY": {
+      "ok": true,
+      "a": "XHB",
+      "b": "SPY",
+      "value": 0.14689538829714197
+    },
+    "SMH_SPY": {
+      "ok": true,
+      "a": "SMH",
+      "b": "SPY",
+      "value": 0.6454312560073756
+    },
+    "KRE_SPY": {
+      "ok": true,
+      "a": "KRE",
+      "b": "SPY",
+      "value": 0.09833020568382188
+    },
+    "COPPER_GOLD": {
+      "ok": true,
+      "a": "HG=F",
+      "b": "GC=F",
+      "value": 0.0012621773020966387
+    }
+  },
+  "fred": {
+    "WALCL": {
+      "ok": false,
+      "series": "WALCL",
+      "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=WALCL",
+      "error": "Remote end closed connection without response"
+    },
+    "RRPONTSYD": {
+      "ok": false,
+      "series": "RRPONTSYD",
+      "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=RRPONTSYD",
+      "error": "Remote end closed connection without response"
+    },
+    "WTREGEN": {
+      "ok": false,
+      "series": "WTREGEN",
+      "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=WTREGEN",
+      "error": "Remote end closed connection without response"
+    },
+    "M2SL": {
+      "ok": false,
+      "series": "M2SL",
+      "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=M2SL",
+      "error": "Remote end closed connection without response"
+    },
+    "GDP": {
+      "ok": false,
+      "series": "GDP",
+      "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=GDP",
+      "error": "Remote end closed connection without response"
+    },
+    "DGS2": {
+      "ok": false,
+      "series": "DGS2",
+      "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS2",
+      "error": "Remote end closed connection without response"
+    },
+    "DGS10": {
+      "ok": false,
+      "series": "DGS10",
+      "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10",
+      "error": "Remote end closed connection without response"
+    },
+    "T10Y2Y": {
+      "ok": false,
+      "series": "T10Y2Y",
+      "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=T10Y2Y",
+      "error": "Remote end closed connection without response"
+    },
+    "BAMLH0A0HYM2": {
+      "ok": false,
+      "series": "BAMLH0A0HYM2",
+      "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2",
+      "error": "Remote end closed connection without response"
+    }
+  },
+  "derived": {}
+}
