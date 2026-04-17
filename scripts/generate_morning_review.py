@@ -303,7 +303,12 @@ def evidence_anchor(name: str, change: str, lookback: str, timestamp: str, sourc
     return f"- {name}: {change}; lookback {lookback}; timestamp {timestamp}; source {source}"
 
 
-def render_review(snapshot: dict, news_items: list[dict]) -> str:
+def render_review(
+    snapshot: dict,
+    news_items: list[dict],
+    forward_themes_md: str | None = None,
+    portfolio_md: str | None = None,
+) -> str:
     generated_at = snapshot.get("generated_at_utc", datetime.now(timezone.utc).isoformat())
     dgs10 = pick(snapshot, "fred", "DGS10")
     dgs2 = pick(snapshot, "fred", "DGS2")
@@ -437,6 +442,8 @@ def render_review(snapshot: dict, news_items: list[dict]) -> str:
                 "If it does not, the index can still look fine while the underlying regime weakens."
             ),
             "",
+            "__FORWARD_THEMES_PLACEHOLDER__",
+            "__PORTFOLIO_PLACEHOLDER__",
             "## PM Desk Color",
             f"My current best bet: {thesis_headline}",
             (
@@ -557,7 +564,20 @@ def render_review(snapshot: dict, news_items: list[dict]) -> str:
         ]
     )
 
-    return "\n".join(lines).rstrip() + "\n"
+    rendered = "\n".join(lines)
+    forward_block = (forward_themes_md or "").rstrip()
+    portfolio_block = (portfolio_md or "").rstrip()
+    rendered = rendered.replace(
+        "__FORWARD_THEMES_PLACEHOLDER__",
+        forward_block if forward_block else "",
+    )
+    rendered = rendered.replace(
+        "__PORTFOLIO_PLACEHOLDER__",
+        portfolio_block if portfolio_block else "",
+    )
+    # Collapse any runs of 3+ blank lines left by empty placeholders.
+    rendered = re.sub(r"\n{3,}", "\n\n", rendered)
+    return rendered.rstrip() + "\n"
 
 
 def write_outputs(output_dir: Path, archive_dir: Path | None, snapshot: dict, news_items: list[dict], review_text: str) -> None:
@@ -577,6 +597,37 @@ def write_outputs(output_dir: Path, archive_dir: Path | None, snapshot: dict, ne
     (dated_dir / "morning-review.md").write_text(review_text, encoding="utf-8")
 
 
+def _safe_forward_themes(snapshot: dict) -> str | None:
+    try:
+        from forward_themes import render_section as forward_render
+    except Exception as exc:  # noqa: BLE001
+        return f"## The 18-Month Lens\n\n[DATA LIMITED: forward_themes import failed: {exc}]\n"
+    try:
+        return forward_render(snapshot)
+    except Exception as exc:  # noqa: BLE001
+        return f"## The 18-Month Lens\n\n[DATA LIMITED: forward_themes failed at runtime: {exc}]\n"
+
+
+def _safe_portfolio(snapshot: dict, thesis_headline: str) -> tuple[dict | None, str | None]:
+    try:
+        from snaptrade_portfolio import (
+            load_portfolio,
+            persist_portfolio,
+            render_section as portfolio_render,
+        )
+    except Exception as exc:  # noqa: BLE001
+        return None, f"## Portfolio Lens\n\n[DATA LIMITED: portfolio import failed: {exc}]\n"
+    try:
+        portfolio = load_portfolio()
+    except Exception as exc:  # noqa: BLE001
+        return None, f"## Portfolio Lens\n\n[DATA LIMITED: portfolio load failed: {exc}]\n"
+    try:
+        md = portfolio_render(portfolio, snapshot, thesis_headline)
+    except Exception as exc:  # noqa: BLE001
+        md = f"## Portfolio Lens\n\n[DATA LIMITED: portfolio render failed: {exc}]\n"
+    return portfolio, md
+
+
 def main() -> int:
     args = parse_args()
     if maybe_skip_run(args.timezone, args.require_local_hour, args.force):
@@ -585,14 +636,19 @@ def main() -> int:
 
     snapshot = build_snapshot(pause_s=args.pause)
     news_items = collect_news()
-    review_text = render_review(snapshot, news_items)
-    write_outputs(
-        Path(args.output_dir),
-        Path(args.archive_dir) if args.archive_dir else None,
-        snapshot,
-        news_items,
-        review_text,
-    )
+
+    thesis_headline, _ = thesis_label(snapshot)
+    forward_md = _safe_forward_themes(snapshot)
+    portfolio, portfolio_md = _safe_portfolio(snapshot, thesis_headline)
+
+    review_text = render_review(snapshot, news_items, forward_md, portfolio_md)
+
+    output_dir = Path(args.output_dir)
+    archive_dir = Path(args.archive_dir) if args.archive_dir else None
+    write_outputs(output_dir, archive_dir, snapshot, news_items, review_text)
+    if portfolio is not None:
+        from snaptrade_portfolio import persist_portfolio
+        persist_portfolio(output_dir, portfolio)
     print(review_text)
     return 0
 

@@ -4,7 +4,9 @@
       "Bash(xargs grep *)",
       "Bash(python -c \"import ast; ast.parse\\(open\\('scripts/market_panels.py'\\).read\\(\\)\\); print\\('syntax OK'\\)\")",
       "Bash(python -c \"import ast; ast.parse\\(open\\('scripts/news_ingest.py'\\).read\\(\\)\\); print\\('syntax OK'\\)\")",
-      "Bash(python -c \"import ast; ast.parse\\(open\\('scripts/forward_themes.py'\\).read\\(\\)\\); print\\('syntax OK'\\)\")"
+      "Bash(python -c \"import ast; ast.parse\\(open\\('scripts/forward_themes.py'\\).read\\(\\)\\); print\\('syntax OK'\\)\")",
+      "Bash(python -c \"import ast; ast.parse\\(open\\('scripts/snaptrade_portfolio.py'\\).read\\(\\)\\); print\\('syntax OK'\\)\")",
+      "Bash(python -c \"import ast; ast.parse\\(open\\('scripts/generate_morning_review.py'\\).read\\(\\)\\); print\\('syntax OK'\\)\")"
     ]
   }
 }

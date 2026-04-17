@@ -22,9 +22,18 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
       - name: Generate morning review
         env:
           MASSIVE_API_KEY: ${{ secrets.MASSIVE_API_KEY }}
+          POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          SNAPTRADE_CLIENT_ID: ${{ secrets.SNAPTRADE_CLIENT_ID }}
+          SNAPTRADE_CONSUMER_KEY: ${{ secrets.SNAPTRADE_CONSUMER_KEY }}
+          SNAPTRADE_USER_ID: ${{ secrets.SNAPTRADE_USER_ID }}
+          SNAPTRADE_USER_SECRET: ${{ secrets.SNAPTRADE_USER_SECRET }}
         run: |
           python scripts/generate_morning_review.py \
             --output-dir reports/latest \

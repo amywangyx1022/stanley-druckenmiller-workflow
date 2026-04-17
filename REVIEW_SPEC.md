@@ -31,12 +31,14 @@ The daily morning review should follow this order:
 3. Rates and FX Anchor
 4. Throughlines
 5. The Asymmetry
-6. PM Desk Color
-7. what_would_change_my_mind
-8. Regime Stability and Confidence
-9. data_timestamp
-10. Evidence anchors
-11. Disclaimer
+6. **The 18-Month Lens** (top 3 forward themes with thesis, counterargument, and citations)
+7. **Portfolio Lens** (top 10 individual equities from SnapTrade, ETFs excluded)
+8. PM Desk Color
+9. what_would_change_my_mind
+10. Regime Stability and Confidence
+11. data_timestamp
+12. Evidence anchors
+13. Disclaimer
 
 ## Throughline Rules
 
@@ -89,6 +91,28 @@ If critical panels or news coverage are missing:
 2. List the missing panels or lanes explicitly.
 3. Limit the write-up to factual observations from available data.
 4. Do not overstate confidence.
+
+## The 18-Month Lens Rules
+
+Requires `OPENAI_API_KEY`. Section is omitted with `DATA LIMITED` if unavailable.
+
+1. Exactly 3 forward themes, ranked by conviction from news + macro snapshot.
+2. Each theme must include: headline, thesis, why, how (with tickers), counterargument, what_would_change_my_mind.
+3. Every claim must cite at least 2 articles from the 7-day news corpus with a verbatim quoted phrase.
+4. All tickers must resolve against Yahoo or Polygon. Themes with fewer than 3 valid tickers are dropped.
+5. A critic LLM pass scores each theme; themes below threshold are dropped rather than regenerated.
+6. If fewer than 3 themes survive validation, render what passed plus an `[INCOMPLETE]` marker.
+7. Voice follows `docs/druckenmiller_persona.md`.
+
+## Portfolio Lens Rules
+
+Requires `SNAPTRADE_CLIENT_ID`, `SNAPTRADE_CONSUMER_KEY`, `SNAPTRADE_USER_ID`, and `SNAPTRADE_USER_SECRET`. Section is omitted with `DATA LIMITED` if credentials are missing.
+
+1. Pull holdings from SnapTrade, aggregate across accounts.
+2. Filter out ETFs (SnapTrade `security_type` + Yahoo `quoteType` fallback).
+3. Top 10 individual equities by portfolio weight.
+4. Each position gets a deterministic throughline tag (Validates / Refutes / Nuances) plus a 1-sentence conditional PM note via LLM.
+5. No trade instructions, targets, or sizing.
 
 ## PM Voice Requirements
 

@@ -2,22 +2,30 @@
 
 This repository is now a plain GitHub automation project for a Druckenmiller-style morning market review. It no longer depends on ClawHub, OpenClaw, or skill-packaging metadata.
 
-The repo does three things:
+The repo does five things:
 
-1. Builds a market snapshot from public macro feeds plus optional Massive market data.
-2. Generates an English-only morning review in Markdown.
-3. Runs that review automatically on weekday mornings through GitHub Actions and emails it through Gmail SMTP.
+1. Builds a market snapshot from public macro feeds plus optional Massive/Polygon market data.
+2. Generates an English-only morning review in Markdown with cross-asset throughlines.
+3. Identifies the top 3 forward-looking investment themes (18-month horizon) using LLM extraction from 7-day news with anti-hallucination guardrails.
+4. Pulls portfolio holdings via SnapTrade, strips ETFs, and applies per-position PM-desk analysis.
+5. Runs that review automatically on weekday mornings through GitHub Actions and emails it through Gmail SMTP.
 
 ## Repo Layout
 
 ```text
 .
 ├── .github/workflows/morning-review.yml
-├── docs/data-sources.md
+├── docs/
+│   ├── data-sources.md
+│   └── druckenmiller_persona.md
+├── requirements.txt
 ├── REVIEW_SPEC.md
 └── scripts/
-├── generate_morning_review.py
+    ├── generate_morning_review.py
     ├── market_panels.py
+    ├── forward_themes.py
+    ├── news_ingest.py
+    ├── snaptrade_portfolio.py
     └── send_review_email.py
 ```
 
@@ -43,11 +51,12 @@ The source map is documented in [docs/data-sources.md](/C:/Users/awang/Downloads
 In short:
 
 - Massive is the preferred source for stock and ETF daily bars when `MASSIVE_API_KEY` is configured.
-- FRED remains the source of record for liquidity and macro time series.
-- Yahoo, Stooq, and FRED proxy series remain as public fallbacks where Massive does not fit or no key is present.
-- News uses Massive first and falls back to Google News RSS search lanes.
+- Polygon is the second tier for equities and commodities when `POLYGON_API_KEY` is configured.
+- FRED remains the source of record for liquidity and macro time series, with Yahoo CBOE yield indices (^TNX, ^FVX, etc.) as fallback when FRED CSV returns stale/empty data.
+- Yahoo, Stooq, and FRED proxy series remain as public fallbacks where Massive/Polygon do not fit or no key is present.
+- News uses Massive + Polygon + Google News RSS for both the daily narrative and the 7-day forward-themes corpus.
 
-## Required GitHub Secret
+## Required GitHub Secrets
 
 Set these repository secrets:
 
@@ -56,13 +65,19 @@ Set these repository secrets:
 - `GMAIL_APP_PASSWORD`
 - `MORNING_REVIEW_EMAIL_TO`
 
-Optional:
+Optional (sections gracefully degrade when absent):
 
+- `POLYGON_API_KEY` — adds Polygon as a data tier for equities, commodities, and news.
+- `OPENAI_API_KEY` — enables the 18-Month Lens forward-themes section (requires `openai` SDK).
+- `SNAPTRADE_CLIENT_ID` — enables portfolio integration.
+- `SNAPTRADE_CONSUMER_KEY`
+- `SNAPTRADE_USER_ID`
+- `SNAPTRADE_USER_SECRET`
 - `MORNING_REVIEW_EMAIL_FROM`
 - `MORNING_REVIEW_EMAIL_CC`
 - `MORNING_REVIEW_SUBJECT_PREFIX`
 
-Without `MASSIVE_API_KEY`, the workflow still runs using the public fallback sources, but the review may mark itself `DATA LIMITED` if live news coverage is too thin.
+Without `MASSIVE_API_KEY`, the workflow still runs using the public fallback sources, but the review may mark itself `DATA LIMITED` if live news coverage is too thin. Without `OPENAI_API_KEY` or `SNAPTRADE_*` credentials, the corresponding sections are omitted with a `DATA LIMITED` marker.
 
 ## Manual Usage
 
